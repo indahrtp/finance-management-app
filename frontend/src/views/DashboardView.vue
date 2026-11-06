@@ -1,3 +1,7 @@
+<script setup>
+import PageCard from '@/components/ui/PageCard.vue'
+</script>
+
 <template>
-  <h1 class="text-xl font-semibold">Dashboard</h1>
+  <PageCard title="Dashboard">Segera hadir.</PageCard>
 </template>
