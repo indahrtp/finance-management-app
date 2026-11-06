@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { Menu, X, LogOut } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { menu } from './menu'
+import ToastHost from '@/components/ui/ToastHost.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -66,5 +67,6 @@ async function logout() {
 
       <main class="p-4 sm:p-6"><RouterView /></main>
     </div>
+    <ToastHost />
   </div>
 </template>
