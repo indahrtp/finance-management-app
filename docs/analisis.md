@@ -44,13 +44,14 @@ Net Income = Total Income - Total Expense
 ## Gambaran Query Laporan
 ```sql
 SELECT c.name AS category, c.type,
-       TO_CHAR(t.date, 'YYYY-MM') AS period,
+       EXTRACT(MONTH FROM t.date)::int AS month,
        SUM(CASE WHEN c.type = 'income'
                 THEN t.credit - t.debit
                 ELSE t.debit - t.credit END) AS amount
 FROM transactions t
-JOIN chart_of_accounts a ON a.id = t.coa_id
-JOIN categories c        ON c.id = a.category_id
-GROUP BY c.name, c.type, period
-ORDER BY period;
+JOIN coa a        ON a.id = t.coa_id
+JOIN categories c ON c.id = a.category_id
+WHERE EXTRACT(YEAR FROM t.date) = :year
+GROUP BY c.name, c.type, month
+ORDER BY month;
 ```
