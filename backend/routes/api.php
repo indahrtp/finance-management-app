@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CoaController;
 use App\Http\Controllers\Api\TransactionController;
+use App\Http\Controllers\Api\ReportController;
 use Illuminate\Support\Facades\Route;
 
 // Publik
@@ -17,4 +18,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('coa', CoaController::class);
     Route::apiResource('transactions', TransactionController::class);
+    Route::get('/reports/profit-loss', [ReportController::class, 'profitLoss']);
 });
