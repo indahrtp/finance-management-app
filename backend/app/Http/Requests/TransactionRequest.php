@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
+use App\Models\Coa;
+use App\Enums\CategoryType;
 
 class TransactionRequest extends FormRequest
 {
@@ -12,7 +15,7 @@ class TransactionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     protected function prepareForValidation(): void

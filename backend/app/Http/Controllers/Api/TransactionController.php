@@ -41,7 +41,11 @@ class TransactionController extends Controller
     {
         $data = $request->validated();
 
-        return response()->json(Transaction::create($data)->load('coa.category'), 201);
+        $data['user_id'] = auth()->id();
+
+        return response()->json(
+            Transaction::create($data)->load('coa.category'), 201
+        );
     }
 
     /**

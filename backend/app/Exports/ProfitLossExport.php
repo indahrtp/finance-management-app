@@ -65,7 +65,6 @@ class ProfitLossExport implements FromArray, ShouldAutoSize, WithStyles, WithTit
 
     public function styles(Worksheet $sheet): array
     {
-        // styles() dipanggil setelah array(), jadi nomor baris sudah terisi
         $lastCol = 'N'; // Kategori + 12 bulan + Total = 14 kolom (A sampai N)
 
         $sheet->mergeCells("A1:{$lastCol}1");
