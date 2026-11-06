@@ -19,4 +19,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('coa', CoaController::class);
     Route::apiResource('transactions', TransactionController::class);
     Route::get('/reports/profit-loss', [ReportController::class, 'profitLoss']);
+    Route::get('/reports/profit-loss/export', [ReportController::class, 'exportProfitLoss']);
 });
