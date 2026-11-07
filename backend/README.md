@@ -31,17 +31,6 @@ Buat database `finance_app`, isi `.env`, lalu:
 php artisan migrate:fresh --seed
 php artisan serve
 ```
-
-## Konfigurasi `.env`
-
-| Variabel | Contoh |
-|---|---|---|
-| `APP_TIMEZONE` | `Asia/Jakarta` |
-| `DB_CONNECTION` | `pgsql` | 
-| `DB_HOST` / `DB_PORT` |
-| `DB_DATABASE` | `finance_app` | 
-| `DB_USERNAME` / `DB_PASSWORD` | 
-
 ## Perintah Berguna
 
 | Perintah | Fungsi |
@@ -54,21 +43,77 @@ php artisan serve
 ## Struktur Folder
 
 ```
-app/
-├── Enums/            CategoryType, TransactionStatus, WalletType
-├── Exports/          ProfitLossExport (Excel)
-├── Http/
-│   ├── Controllers/Api/   Auth, Category, Coa, Wallet, Transaction,
-│   │                      Budget, Report, Dashboard
-│   └── Requests/          TransactionRequest
-├── Models/           User, Category, Coa, Wallet, Transaction, Budget
-├── Rules/            UniqueInsensitive
-└── Services/         ProfitLossService
-database/
-├── migrations/
-└── seeders/          User, Category, Coa, Wallet, Transaction, Budget
-routes/api.php
-```
+backend/
+├── app/
+│   ├── Enums/
+│   │   ├── CategoryType.php
+│   │   ├── TransactionStatus.php
+│   │   └── WalletType.php
+│   ├── Exports/
+│   │   └── ProfitLossExport.php
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Controller.php
+│   │   │   └── Api/
+│   │   │       ├── AuthController.php
+│   │   │       ├── BudgetController.php
+│   │   │       ├── CategoryController.php
+│   │   │       ├── CoaController.php
+│   │   │       ├── DashboardController.php
+│   │   │       ├── ReportController.php
+│   │   │       ├── TransactionController.php
+│   │   │       └── WalletController.php
+│   │   ├── Middleware/
+│   │   │   └── ExtendTokenExpiry.php
+│   │   └── Requests/
+│   │       └── TransactionRequest.php
+│   ├── Models/
+│   │   ├── Budget.php
+│   │   ├── Category.php
+│   │   ├── Coa.php
+│   │   ├── Transaction.php
+│   │   ├── User.php
+│   │   └── Wallet.php
+│   ├── Providers/
+│   │   └── AppServiceProvider.php
+│   ├── Rules/
+│   │   └── UniqueInsensitive.php
+│   └── Services/
+│       └── ProfitLossService.php
+├── bootstrap/
+│   └── app.php
+├── config/
+│   ├── auth.php
+│   ├── cors.php
+│   └── sanctum.php
+├── database/
+│   ├── migrations/
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── ..._create_personal_access_tokens_table.php
+│   │   ├── ..._create_categories_table.php
+│   │   ├── ..._create_coa_table.php
+│   │   ├── ..._create_wallets_table.php
+│   │   ├── ..._create_transactions_table.php
+│   │   └── ..._create_budgets_table.php
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       ├── UserSeeder.php
+│       ├── CategorySeeder.php
+│       ├── CoaSeeder.php
+│       ├── WalletSeeder.php
+│       ├── TransactionSeeder.php
+│       └── BudgetSeeder.php
+├── routes/
+│   ├── api.php
+│   ├── console.php
+│   └── web.php
+├── storage/
+│   ├── app/private/transaction-attachments/
+│   └── logs/laravel.log
+├── tests/
+├──
 
 ## Konvensi API
 

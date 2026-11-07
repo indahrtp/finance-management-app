@@ -40,18 +40,65 @@ Aplikasi berjalan di `http://localhost:5173`. Restart `npm run dev` setiap mengu
 ## Struktur Folder
 
 ```
-src/
-├── assets/main.css        Tailwind, tema (warna, font, animasi), dark mode
-├── components/
-│   ├── ui/                Komponen dasar yang dipakai ulang
-│   └── reports/           Tabel laporan Profit/Loss (tahunan, bulanan)
-├── composables/           useToast, useTheme, usePeriodRange
-├── layouts/               AppLayout (sidebar dan navbar), menu.js
-├── router/index.js        Rute dan penjaga halaman
-├── services/api.js        Instance Axios
-├── stores/auth.js         Pinia: sesi pengguna
-├── utils/                 format, errors, download, period
-└── views/                 Satu file per halaman
+frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   │   └── main.css
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── BaseButton.vue
+│   │   │   ├── BaseInput.vue
+│   │   │   ├── BaseModal.vue
+│   │   │   ├── BaseSelect.vue
+│   │   │   ├── ConfirmModal.vue
+│   │   │   ├── MonthPicker.vue
+│   │   │   ├── PageCard.vue
+│   │   │   ├── PaginationBar.vue
+│   │   │   ├── PeriodPicker.vue
+│   │   │   ├── RevealOnScroll.vue
+│   │   │   ├── SegmentedToggle.vue
+│   │   │   ├── StatCard.vue
+│   │   │   ├── ThemeToggle.vue
+│   │   │   ├── ToastHost.vue
+│   │   │   └── TypeBadge.vue
+│   │   └── reports/
+│   │       ├── ProfitLossMonthly.vue
+│   │       └── ProfitLossYearly.vue
+│   ├── composables/
+│   │   ├── usePeriodRange.js
+│   │   ├── useTheme.js
+│   │   └── useToast.js
+│   ├── layouts/
+│   │   ├── AppLayout.vue
+│   │   └── menu.js
+│   ├── router/
+│   │   └── index.js
+│   ├── services/
+│   │   └── api.js
+│   ├── stores/
+│   │   └── auth.js
+│   ├── utils/
+│   │   ├── download.js
+│   │   ├── errors.js
+│   │   ├── format.js
+│   │   └── period.js
+│   ├── views/
+│   │   ├── BudgetView.vue
+│   │   ├── CategoryView.vue
+│   │   ├── CoaView.vue
+│   │   ├── DashboardView.vue
+│   │   ├── LandingView.vue
+│   │   ├── LoginView.vue
+│   │   ├── ProfitLossView.vue
+│   │   ├── TransactionView.vue
+│   │   └── WalletView.vue
+│   ├── App.vue
+│   └── main.js
+├── .env.example
+├── index.html
+├── package.json
+└── vite.config.js
 ```
 
 ## Halaman dan Rute
