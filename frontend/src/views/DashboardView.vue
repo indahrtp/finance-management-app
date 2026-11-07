@@ -4,11 +4,13 @@ import VueApexCharts from 'vue3-apexcharts'
 import { TrendingUp, TrendingDown, Wallet, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import api from '@/services/api'
 import { useToast } from '@/composables/useToast'
+import { useTheme } from '@/composables/useTheme'
 import { errorMessage } from '@/utils/errors'
 import { rupiah, tanggal, BULAN } from '@/utils/format'
 import PageCard from '@/components/ui/PageCard.vue'
 import StatCard from '@/components/ui/StatCard.vue'
 
+const { isDark } = useTheme()
 const toast = useToast()
 
 const thisYear = new Date().getFullYear()
@@ -46,23 +48,26 @@ const barSeries = computed(() => [
 ])
 
 const barOptions = computed(() => ({
-  chart: { type: 'bar', toolbar: { show: false }, fontFamily: 'inherit' },
+  chart: { type: 'bar', toolbar: { show: false }, fontFamily: 'inherit', background: 'transparent' },
+  theme: { mode: isDark.value ? 'dark' : 'light' },
   colors: ['#10b981', '#f97316'],
   plotOptions: { bar: { columnWidth: '55%', borderRadius: 4 } },
   dataLabels: { enabled: false },
   stroke: { show: true, width: 2, colors: ['transparent'] },
   xaxis: { categories: BULAN, axisBorder: { show: false }, axisTicks: { show: false } },
   yaxis: { labels: { formatter: ringkas } },
-  grid: { borderColor: '#f3f4f6' },
+  grid: { borderColor: isDark.value ? '#1f2937' : '#f3f4f6' },
   legend: { position: 'top', horizontalAlign: 'right' },
   tooltip: { y: { formatter: (v) => rupiah(v) } },
 }))
 
-// Donut: komposisi pengeluaran (kategori bernilai 0 dibuang)
+// Donut: komposisi pengeluaran
 const breakdown = computed(() => (data.value?.expense_breakdown ?? []).filter((x) => x.total > 0))
 const donutSeries = computed(() => breakdown.value.map((x) => x.total))
 const donutOptions = computed(() => ({
-  chart: { type: 'donut', fontFamily: 'inherit' },
+  chart: { type: 'donut', fontFamily: 'inherit', background: 'transparent' },
+  theme: { mode: isDark.value ? 'dark' : 'light' },
+  stroke: { colors: [isDark.value ? '#111827' : '#ffffff'] },
   labels: breakdown.value.map((x) => x.category),
   colors: ['#465fff', '#f97316', '#10b981', '#eab308', '#ef4444', '#8b5cf6'],
   legend: { position: 'bottom' },
@@ -81,16 +86,16 @@ onMounted(load)
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h1 class="text-xl font-semibold">Dashboard</h1>
       <div class="flex items-center gap-2">
-        <button class="rounded-lg border border-gray-300 bg-white p-2 hover:bg-gray-50" @click="year--">
+        <button class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 hover:bg-gray-50 dark:hover:bg-gray-800" @click="year--">
           <ChevronLeft :size="16" />
         </button>
         <select
           v-model="year"
-          class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         >
           <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
         </select>
-        <button class="rounded-lg border border-gray-300 bg-white p-2 hover:bg-gray-50" @click="year++">
+        <button class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 p-2 hover:bg-gray-50 dark:hover:bg-gray-800" @click="year++">
           <ChevronRight :size="16" />
         </button>
       </div>
@@ -115,11 +120,11 @@ onMounted(load)
       <!-- Grafik -->
       <div class="grid gap-6 xl:grid-cols-3" :class="{ 'opacity-60': loading }">
         <PageCard :title="`Income vs Expense ${data.year}`" class="xl:col-span-2">
-          <VueApexCharts type="bar" height="320" :options="barOptions" :series="barSeries" />
+          <VueApexCharts :key="String(isDark)" type="bar" height="320" :options="barOptions" :series="barSeries" />
         </PageCard>
 
         <PageCard title="Komposisi Pengeluaran">
-          <VueApexCharts v-if="donutSeries.length" type="donut" height="320" :options="donutOptions" :series="donutSeries" />
+          <VueApexCharts :key="String(isDark)" v-if="donutSeries.length" type="donut" height="320" :options="donutOptions" :series="donutSeries" />
           <p v-else class="flex h-[320px] items-center justify-center text-sm text-gray-400">
             Belum ada pengeluaran.
           </p>
@@ -136,7 +141,7 @@ onMounted(load)
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm">
-            <thead class="border-b border-gray-200 text-gray-500">
+            <thead class="border-b border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400">
               <tr>
                 <th class="py-3 pr-4 font-medium">Tanggal</th>
                 <th class="py-3 pr-4 font-medium">COA</th>
@@ -148,13 +153,13 @@ onMounted(load)
               <tr v-if="!data.recent_transactions.length">
                 <td colspan="4" class="py-8 text-center text-gray-400">Belum ada transaksi.</td>
               </tr>
-              <tr v-for="t in data.recent_transactions" :key="t.id" class="border-b border-gray-100 last:border-0">
+              <tr v-for="t in data.recent_transactions" :key="t.id" class="border-b border-gray-100 dark:border-gray-800 last:border-0">
                 <td class="whitespace-nowrap py-3 pr-4">{{ tanggal(t.date) }}</td>
                 <td class="py-3 pr-4">{{ t.coa?.name }}</td>
-                <td class="py-3 pr-4 text-gray-600">{{ t.description || '-' }}</td>
+                <td class="py-3 pr-4 text-gray-600 dark:text-gray-300">{{ t.description || '-' }}</td>
                 <td
                   class="whitespace-nowrap py-3 text-right font-medium"
-                  :class="Number(t.credit) > 0 ? 'text-emerald-600' : 'text-orange-600'"
+                  :class="Number(t.credit) > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-orange-600 dark:text-orange-400'"
                 >
                   {{ Number(t.credit) > 0 ? '+' : '-' }} {{ rupiah(Number(t.credit) > 0 ? t.credit : t.debit) }}
                 </td>

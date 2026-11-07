@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Coa;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Models\Budget;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -79,6 +80,21 @@ class DatabaseSeeder extends Seeder
             Transaction::create([
                 'date' => $date, 'coa_id' => $coa[$code]->id, 'user_id' => $user->id,
                 'description' => $desc, 'debit' => $debit, 'credit' => $credit,
+            ]);
+        }
+
+        foreach ([
+            ['2022-02-01', 'Family Expense', 3000000],
+            ['2022-02-01', 'Transport Expense', 300000],
+            ['2022-02-01', 'Meal Expense', 400000],
+            ['2022-03-01', 'Family Expense', 4000000],
+            ['2022-03-01', 'Transport Expense', 300000],
+            ['2022-03-01', 'Meal Expense', 200000],
+        ] as [$period, $cat, $amount]) {
+            Budget::create([
+                'category_id' => $cats[$cat]->id,
+                'period' => $period,
+                'amount' => $amount,
             ]);
         }
     }

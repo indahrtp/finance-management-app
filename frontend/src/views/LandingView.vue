@@ -6,6 +6,7 @@ import {
 } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import RevealOnScroll from '@/components/ui/RevealOnScroll.vue'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 
 const auth = useAuthStore()
 const menuOpen = ref(false)
@@ -36,36 +37,40 @@ const expense = [20, 30, 25, 40, 35, 45]
 </script>
 
 <template>
-  <div class="min-h-screen bg-white text-gray-800">
+  <div class="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
     <!-- Navbar -->
-    <header class="fixed inset-x-0 top-0 z-30 border-b border-gray-100 bg-white/80 backdrop-blur">
+    <header class="fixed inset-x-0 top-0 z-30 border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur">
       <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <RouterLink to="/" class="text-xl font-bold tracking-tight">
           Finance<span class="text-brand-500">App</span>
         </RouterLink>
 
-        <nav class="hidden items-center gap-8 text-sm font-medium text-gray-600 md:flex">
-          <a v-for="l in links" :key="l.href" :href="l.href" class="transition hover:text-gray-900">{{ l.label }}</a>
+        <nav class="hidden items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300 md:flex">
+          <a v-for="l in links" :key="l.href" :href="l.href" class="transition hover:text-gray-900 dark:hover:text-white">{{ l.label }}</a>
         </nav>
 
-        <div class="hidden md:block">
-          <RouterLink
-            :to="auth.isLoggedIn ? '/dashboard' : '/login'"
-            class="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-600"
-          >
-            {{ auth.isLoggedIn ? 'Buka Dashboard' : 'Masuk' }}
-          </RouterLink>
-        </div>
+        <div class="flex items-center gap-2">
+          <ThemeToggle />
 
-        <button class="rounded-lg p-2 hover:bg-gray-100 md:hidden" @click="menuOpen = !menuOpen">
-          <component :is="menuOpen ? X : Menu" :size="22" />
-        </button>
+          <div class="hidden md:block">
+            <RouterLink
+                :to="auth.isLoggedIn ? '/dashboard' : '/login'"
+                class="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-brand-600"
+            >
+                {{ auth.isLoggedIn ? 'Buka Dashboard' : 'Masuk' }}
+            </RouterLink>
+            </div>
+
+            <button class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800 md:hidden" @click="menuOpen = !menuOpen">
+            <component :is="menuOpen ? X : Menu" :size="22" />
+            </button>
+        </div>
       </div>
 
-      <div v-if="menuOpen" class="space-y-1 border-t border-gray-100 bg-white px-4 py-3 md:hidden">
+      <div v-if="menuOpen" class="space-y-1 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 md:hidden">
         <a
           v-for="l in links" :key="l.href" :href="l.href" @click="menuOpen = false"
-          class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
         >{{ l.label }}</a>
         <RouterLink
           :to="auth.isLoggedIn ? '/dashboard' : '/login'"
@@ -83,13 +88,13 @@ const expense = [20, 30, 25, 40, 35, 45]
         <div class="pointer-events-none absolute left-1/2 top-0 -z-10 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-brand-500/20 blur-3xl" />
 
         <div class="mx-auto max-w-3xl text-center">
-          <span class="animate-fade-up inline-block rounded-full border border-brand-500/20 bg-brand-50 px-4 py-1.5 text-xs font-semibold text-brand-500 motion-reduce:animate-none">
+          <span class="animate-fade-up inline-block rounded-full border border-brand-500/20 bg-brand-50 dark:bg-brand-500/15 px-4 py-1.5 text-xs font-semibold text-brand-500 motion-reduce:animate-none">
             Berbasis Chart of Account
           </span>
           <h1 class="animate-fade-up mt-6 text-4xl font-bold leading-tight tracking-tight motion-reduce:animate-none sm:text-6xl" style="animation-delay: 100ms">
             Kelola keuangan Anda dengan lebih rapi
           </h1>
-          <p class="animate-fade-up mx-auto mt-6 max-w-xl text-lg text-gray-600 motion-reduce:animate-none" style="animation-delay: 200ms">
+          <p class="animate-fade-up mx-auto mt-6 max-w-xl text-lg text-gray-600 dark:text-gray-300 motion-reduce:animate-none" style="animation-delay: 200ms">
             Catat transaksi, kelompokkan per kategori, dan dapatkan laporan Profit/Loss
             bulanan yang bisa diunduh ke Excel.
           </p>
@@ -100,7 +105,7 @@ const expense = [20, 30, 25, 40, 35, 45]
             >
               Mulai Sekarang <ArrowRight :size="18" />
             </RouterLink>
-            <a href="#fitur" class="rounded-xl border border-gray-300 bg-white px-6 py-3 font-medium text-gray-700 transition hover:bg-gray-50">
+            <a href="#fitur" class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-3 font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800">
               Lihat Fitur
             </a>
           </div>
@@ -108,23 +113,23 @@ const expense = [20, 30, 25, 40, 35, 45]
 
         <!-- Mockup dashboard -->
         <div class="animate-fade-up mx-auto mt-16 max-w-4xl motion-reduce:animate-none" style="animation-delay: 450ms">
-          <div class="animate-float rounded-2xl border border-gray-200 bg-white p-4 shadow-2xl shadow-gray-200/60 motion-reduce:animate-none sm:p-6">
+          <div class="animate-float rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 shadow-2xl shadow-gray-200/60 motion-reduce:animate-none sm:p-6">
             <div class="grid gap-3 sm:grid-cols-3">
-              <div class="rounded-xl bg-emerald-50 p-4">
-                <p class="text-xs text-gray-500">Total Income</p>
-                <p class="mt-1 text-lg font-semibold text-emerald-700">Rp 51.000.000</p>
+              <div class="rounded-xl bg-emerald-50 dark:bg-emerald-500/15 p-4">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Total Income</p>
+                <p class="mt-1 text-lg font-semibold text-emerald-700 dark:text-emerald-400">Rp 51.000.000</p>
               </div>
-              <div class="rounded-xl bg-orange-50 p-4">
-                <p class="text-xs text-gray-500">Total Expense</p>
-                <p class="mt-1 text-lg font-semibold text-orange-700">Rp 9.800.000</p>
+              <div class="rounded-xl bg-orange-50 dark:bg-orange-500/15 p-4">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Total Expense</p>
+                <p class="mt-1 text-lg font-semibold text-orange-700 dark:text-orange-400">Rp 9.800.000</p>
               </div>
-              <div class="rounded-xl bg-brand-50 p-4">
-                <p class="text-xs text-gray-500">Net Income</p>
+              <div class="rounded-xl bg-brand-50 dark:bg-brand-500/15 p-4">
+                <p class="text-xs text-gray-500 dark:text-gray-400">Net Income</p>
                 <p class="mt-1 text-lg font-semibold text-brand-500">Rp 41.200.000</p>
               </div>
             </div>
 
-            <div class="mt-4 flex h-40 items-end gap-3 rounded-xl border border-gray-100 p-4 sm:h-52 sm:gap-5">
+            <div class="mt-4 flex h-40 items-end gap-3 rounded-xl border border-gray-100 dark:border-gray-800 p-4 sm:h-52 sm:gap-5">
               <div v-for="(v, i) in income" :key="i" class="flex h-full flex-1 items-end gap-1">
                 <div class="w-1/2 rounded-t bg-emerald-400" :style="{ height: v + '%' }" />
                 <div class="w-1/2 rounded-t bg-orange-400" :style="{ height: expense[i] + '%' }" />
@@ -135,23 +140,23 @@ const expense = [20, 30, 25, 40, 35, 45]
       </section>
 
       <!-- Fitur -->
-      <section id="fitur" class="scroll-mt-16 bg-gray-50 px-4 py-20 sm:px-6">
+      <section id="fitur" class="scroll-mt-16 bg-gray-50 dark:bg-gray-950 px-4 py-20 sm:px-6">
         <div class="mx-auto max-w-6xl">
           <RevealOnScroll>
             <div class="mx-auto max-w-2xl text-center">
               <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Semua yang Anda butuhkan</h2>
-              <p class="mt-4 text-gray-600">Fitur inti pengelolaan keuangan, dibuat sederhana dan terhubung satu sama lain.</p>
+              <p class="mt-4 text-gray-600 dark:text-gray-300">Fitur inti pengelolaan keuangan, dibuat sederhana dan terhubung satu sama lain.</p>
             </div>
           </RevealOnScroll>
 
           <div class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <RevealOnScroll v-for="(f, i) in features" :key="f.title" :delay="(i % 3) * 100" class="h-full">
-              <div class="h-full rounded-2xl border border-gray-200 bg-white p-6 transition hover:-translate-y-1 hover:shadow-lg">
-                <div class="inline-flex rounded-xl bg-brand-50 p-3 text-brand-500">
+              <div class="h-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 transition hover:-translate-y-1 hover:shadow-lg">
+                <div class="inline-flex rounded-xl bg-brand-50 dark:bg-brand-500/15 p-3 text-brand-500">
                   <component :is="f.icon" :size="22" />
                 </div>
                 <h3 class="mt-5 text-lg font-semibold">{{ f.title }}</h3>
-                <p class="mt-2 text-sm leading-relaxed text-gray-600">{{ f.text }}</p>
+                <p class="mt-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">{{ f.text }}</p>
               </div>
             </RevealOnScroll>
           </div>
@@ -164,16 +169,16 @@ const expense = [20, 30, 25, 40, 35, 45]
           <RevealOnScroll>
             <div class="mx-auto max-w-2xl text-center">
               <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Cara kerjanya</h2>
-              <p class="mt-4 text-gray-600">Tiga langkah dari pencatatan sampai laporan.</p>
+              <p class="mt-4 text-gray-600 dark:text-gray-300">Tiga langkah dari pencatatan sampai laporan.</p>
             </div>
           </RevealOnScroll>
 
           <div class="mt-14 grid gap-6 md:grid-cols-3">
             <RevealOnScroll v-for="(s, i) in steps" :key="s.n" :delay="i * 120" class="h-full">
-              <div class="h-full rounded-2xl border border-gray-200 p-6">
+              <div class="h-full rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
                 <span class="text-4xl font-bold text-brand-500/30">{{ s.n }}</span>
                 <h3 class="mt-4 text-lg font-semibold">{{ s.title }}</h3>
-                <p class="mt-2 text-sm text-gray-600">{{ s.text }}</p>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">{{ s.text }}</p>
               </div>
             </RevealOnScroll>
           </div>
@@ -197,8 +202,8 @@ const expense = [20, 30, 25, 40, 35, 45]
       </section>
     </main>
 
-    <footer class="border-t border-gray-100 px-4 py-8 text-center text-sm text-gray-500 sm:px-6">
-      © {{ new Date().getFullYear() }} FinanceApp. Dibuat dengan Laravel dan Vue.js.
+    <footer class="border-t border-gray-100 dark:border-gray-800 px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400 sm:px-6">
+      © {{ new Date().getFullYear() }} FinanceApp.
     </footer>
   </div>
 </template>

@@ -19,6 +19,7 @@ const router = createRouter({
         { path: 'categories', name: 'categories', component: () => import('@/views/CategoryView.vue') },
         { path: 'coa', name: 'coa', component: () => import('@/views/CoaView.vue') },
         { path: 'transactions', name: 'transactions', component: () => import('@/views/TransactionView.vue') },
+        { path: 'budgets', name: 'budgets', component: () => import('@/views/BudgetView.vue') },
         { path: 'reports/profit-loss', name: 'profit-loss', component: () => import('@/views/ProfitLossView.vue') },
       ],
     },

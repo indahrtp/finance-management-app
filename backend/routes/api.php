@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CoaController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\BudgetController;
 use Illuminate\Support\Facades\Route;
 
 // Publik
@@ -22,4 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('transactions', TransactionController::class);
     Route::get('/reports/profit-loss', [ReportController::class, 'profitLoss']);
     Route::get('/reports/profit-loss/export', [ReportController::class, 'exportProfitLoss']);
+    Route::get('/budgets', [BudgetController::class, 'index']);
+    Route::post('/budgets', [BudgetController::class, 'store']);
+    Route::delete('/budgets/{budget}', [BudgetController::class, 'destroy']);
 });

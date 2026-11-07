@@ -115,7 +115,7 @@ onMounted(load)
 
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
-        <thead class="border-b border-gray-200 text-gray-500">
+        <thead class="border-b border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400">
           <tr>
             <th class="py-3 pr-4 font-medium">Nama</th>
             <th class="py-3 pr-4 font-medium">Tipe</th>
@@ -126,15 +126,15 @@ onMounted(load)
         <tbody>
           <tr v-if="loading"><td colspan="4" class="py-8 text-center text-gray-400">Memuat...</td></tr>
           <tr v-else-if="!items.length"><td colspan="4" class="py-8 text-center text-gray-400">Belum ada data.</td></tr>
-          <tr v-for="c in items" :key="c.id" class="border-b border-gray-100 last:border-0">
+          <tr v-for="c in items" :key="c.id" class="border-b border-gray-100 dark:border-gray-800 last:border-0">
             <td class="py-3 pr-4 font-medium">{{ c.name }}</td>
             <td class="py-3 pr-4"><TypeBadge :type="c.type" /></td>
             <td class="py-3 pr-4 text-right">{{ c.coa_count }}</td>
             <td class="py-3 text-right">
-              <button class="rounded p-2 text-gray-500 hover:bg-gray-100" title="Ubah" @click="openEdit(c)">
+              <button class="rounded p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800" title="Ubah" @click="openEdit(c)">
                 <Pencil :size="16" />
               </button>
-              <button class="rounded p-2 text-red-500 hover:bg-red-50" title="Hapus" @click="deleting = c">
+              <button class="rounded p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/15" title="Hapus" @click="deleting = c">
                 <Trash2 :size="16" />
               </button>
             </td>

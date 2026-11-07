@@ -5,6 +5,7 @@ import { Menu, X, LogOut } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
 import { menu } from './menu'
 import ToastHost from '@/components/ui/ToastHost.vue'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -50,16 +51,17 @@ async function logout() {
 
     <!-- Konten -->
     <div class="lg:pl-64">
-      <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">
-        <button class="rounded-lg p-2 hover:bg-gray-100 lg:hidden" @click="open = true">
+      <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 sm:px-6">
+        <button class="rounded-lg p-2 hover:bg-gray-100 dark:hover:bg-gray-800 lg:hidden" @click="open = true">
           <Menu :size="22" />
         </button>
         <div class="ml-auto flex items-center gap-4">
+          <ThemeToggle />
           <div class="text-right text-sm leading-tight">
             <p class="font-medium">{{ auth.user?.name }}</p>
-            <p class="text-xs text-gray-500">{{ auth.user?.email }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ auth.user?.email }}</p>
           </div>
-          <button @click="logout" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+          <button @click="logout" class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/15">
             <LogOut :size="16" /> Keluar
           </button>
         </div>

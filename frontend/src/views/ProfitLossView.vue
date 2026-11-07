@@ -91,7 +91,7 @@ const hasData = computed(() => {
 })
 
 // Warna negatif untuk net income
-const negative = (n) => (n < 0 ? 'text-red-600' : '')
+const negative = (n) => (n < 0 ? 'text-red-600 dark:text-red-400' : '')
 
 watch(year, load)
 onMounted(load)
@@ -101,16 +101,16 @@ onMounted(load)
   <PageCard :title="`Laporan Profit/Loss ${year}`">
     <template #actions>
       <div class="flex flex-wrap items-center gap-2">
-        <button class="rounded-lg border border-gray-300 p-2 hover:bg-gray-50" title="Tahun sebelumnya" @click="year--">
+        <button class="rounded-lg border border-gray-300 dark:border-gray-700 p-2 hover:bg-gray-50 dark:hover:bg-gray-800" title="Tahun sebelumnya" @click="year--">
           <ChevronLeft :size="16" />
         </button>
         <select
           v-model="year"
-          class="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
+          class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
         >
           <option v-for="y in yearOptions" :key="y" :value="y">{{ y }}</option>
         </select>
-        <button class="rounded-lg border border-gray-300 p-2 hover:bg-gray-50" title="Tahun berikutnya" @click="year++">
+        <button class="rounded-lg border border-gray-300 dark:border-gray-700 p-2 hover:bg-gray-50 dark:hover:bg-gray-800" title="Tahun berikutnya" @click="year++">
           <ChevronRight :size="16" />
         </button>
 
@@ -123,15 +123,15 @@ onMounted(load)
     <p v-if="loading && !report" class="py-8 text-center text-gray-400">Memuat...</p>
 
     <template v-else-if="report">
-      <p v-if="!hasData" class="mb-4 rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-500">
+      <p v-if="!hasData" class="mb-4 rounded-lg bg-gray-50 dark:bg-gray-950 px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
         Belum ada transaksi pada tahun {{ year }}.
       </p>
 
-      <div class="overflow-x-auto rounded-lg border border-gray-200" :class="{ 'opacity-60': loading }">
+      <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-800" :class="{ 'opacity-60': loading }">
         <table class="w-full min-w-[1100px] border-collapse text-sm">
           <thead>
-            <tr class="bg-yellow-300 text-left">
-              <th class="sticky left-0 z-10 bg-yellow-300 px-4 py-3 font-semibold">Kategori</th>
+            <tr class="bg-yellow-300 dark:bg-yellow-900 text-left">
+              <th class="sticky left-0 z-10 bg-yellow-300 dark:bg-yellow-900 px-4 py-3 font-semibold">Kategori</th>
               <th v-for="m in report.months" :key="m" class="px-3 py-3 text-right font-semibold">
                 {{ BULAN[m - 1] }}
               </th>
@@ -141,15 +141,15 @@ onMounted(load)
 
           <tbody>
             <!-- Income -->
-            <tr v-for="l in report.income" :key="'i' + l.category_id" class="bg-green-100">
-              <td class="sticky left-0 bg-green-100 px-4 py-2.5">{{ l.category }}</td>
+            <tr v-for="l in report.income" :key="'i' + l.category_id" class="bg-green-100 dark:bg-green-950">
+              <td class="sticky left-0 bg-green-100 dark:bg-green-950 px-4 py-2.5">{{ l.category }}</td>
               <td v-for="(v, i) in l.months" :key="i" class="px-3 py-2.5 text-right tabular-nums" :class="{ 'text-gray-400': v === 0 }">
                 {{ angka(v) }}
               </td>
               <td class="px-4 py-2.5 text-right font-medium tabular-nums">{{ angka(l.total) }}</td>
             </tr>
-            <tr class="bg-green-300 font-semibold">
-              <td class="sticky left-0 bg-green-300 px-4 py-2.5">Total Income</td>
+            <tr class="bg-green-300 dark:bg-green-900 font-semibold">
+              <td class="sticky left-0 bg-green-300 dark:bg-green-900 px-4 py-2.5">Total Income</td>
               <td v-for="(v, i) in report.total_income.months" :key="i" class="px-3 py-2.5 text-right tabular-nums">
                 {{ angka(v) }}
               </td>
@@ -157,15 +157,15 @@ onMounted(load)
             </tr>
 
             <!-- Expense -->
-            <tr v-for="l in report.expense" :key="'e' + l.category_id" class="bg-orange-100">
-              <td class="sticky left-0 bg-orange-100 px-4 py-2.5">{{ l.category }}</td>
+            <tr v-for="l in report.expense" :key="'e' + l.category_id" class="bg-orange-100 dark:bg-orange-950">
+              <td class="sticky left-0 bg-orange-100 dark:bg-orange-950 px-4 py-2.5">{{ l.category }}</td>
               <td v-for="(v, i) in l.months" :key="i" class="px-3 py-2.5 text-right tabular-nums" :class="{ 'text-gray-400': v === 0 }">
                 {{ angka(v) }}
               </td>
               <td class="px-4 py-2.5 text-right font-medium tabular-nums">{{ angka(l.total) }}</td>
             </tr>
-            <tr class="bg-orange-300 font-semibold">
-              <td class="sticky left-0 bg-orange-300 px-4 py-2.5">Total Expense</td>
+            <tr class="bg-orange-300 dark:bg-orange-900 font-semibold">
+              <td class="sticky left-0 bg-orange-300 dark:bg-orange-900 px-4 py-2.5">Total Expense</td>
               <td v-for="(v, i) in report.total_expense.months" :key="i" class="px-3 py-2.5 text-right tabular-nums">
                 {{ angka(v) }}
               </td>
@@ -173,8 +173,8 @@ onMounted(load)
             </tr>
 
             <!-- Net income -->
-            <tr class="border-t-2 border-gray-300 bg-white font-bold">
-              <td class="sticky left-0 bg-white px-4 py-3">Net Income</td>
+            <tr class="border-t-2 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 font-bold">
+              <td class="sticky left-0 bg-white dark:bg-gray-900 px-4 py-3">Net Income</td>
               <td v-for="(v, i) in report.net_income.months" :key="i" class="px-3 py-3 text-right tabular-nums" :class="negative(v)">
                 {{ angka(v) }}
               </td>
@@ -186,7 +186,7 @@ onMounted(load)
         </table>
       </div>
 
-      <p class="mt-3 text-xs text-gray-500">
+      <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
         Income = credit − debit, Expense = debit − credit. Digeser ke samping untuk melihat semua bulan.
       </p>
     </template>

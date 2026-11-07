@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+html.dark {
+  color-scheme: dark;
+}
+
 @theme {
   --font-sans: "Urbanist", ui-sans-serif, system-ui, sans-serif;
   --color-brand-50: #ecf3ff;
@@ -25,5 +31,5 @@ html {
 }
 
 body {
-  @apply bg-gray-50 text-gray-800 antialiased;
+  @apply bg-gray-50 text-gray-800 antialiased dark:bg-gray-950 dark:text-gray-100;
 }
