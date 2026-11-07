@@ -34,8 +34,9 @@ class TransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => ['required', 'date'],
+            'date' => ['required', 'date', 'after_or_equal:2000-01-01', 'before_or_equal:today'],
             'coa_id' => ['required', 'exists:coa,id'],
+            'wallet_id' => ['required', 'exists:wallets,id'],
             'description' => ['nullable', 'string', 'max:255'],
             'debit' => ['required', 'numeric', 'min:0', 'max:9999999999999'],
             'credit' => ['required', 'numeric', 'min:0', 'max:9999999999999'],
@@ -68,6 +69,14 @@ class TransactionRequest extends FormRequest
                     $validator->errors()->add('debit', 'COA bertipe expense hanya boleh memakai debit.');
                 }
             },
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'date.before_or_equal' => 'Tanggal transaksi tidak boleh melebihi hari ini.',
+        'date.after_or_equal' => 'Tanggal transaksi tidak boleh sebelum 1 Januari 2000.',
         ];
     }
 }

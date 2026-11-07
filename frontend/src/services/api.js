@@ -16,7 +16,13 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401 && !error.config.url.includes('/login')) {
+    const url = error.config?.url || ''
+
+    if (error.response?.status === 401 && !url.includes('/login')) {
+      // Tandai sesi berakhir (bukan saat logout manual)
+      if (localStorage.getItem('token') && !url.includes('/logout')) {
+        sessionStorage.setItem('session_expired', '1')
+      }
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'

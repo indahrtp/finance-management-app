@@ -20,6 +20,8 @@ return new class extends Migration
               ->restrictOnDelete();
             $table->timestamps();
         });
+
+        DB::statement('CREATE UNIQUE INDEX coa_name_ci_unique ON coa (LOWER(name))');
     }
 
     /**

@@ -5,6 +5,8 @@ import api from '@/services/api'
 import { useToast } from '@/composables/useToast'
 import { validationErrors, errorMessage } from '@/utils/errors'
 import { rupiah } from '@/utils/format'
+import MonthPicker from '@/components/ui/MonthPicker.vue'
+import { loadRange } from '@/composables/usePeriodRange'
 import PageCard from '@/components/ui/PageCard.vue'
 import StatCard from '@/components/ui/StatCard.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -70,6 +72,7 @@ async function save() {
       amount: Number(amount.value) || 0,
     })
     toast.success('Anggaran disimpan.')
+    loadRange(true)
     showForm.value = false
     await load()
   } catch (e) {
@@ -107,10 +110,7 @@ onMounted(load)
   <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-3">
       <h1 class="text-xl font-semibold">Anggaran {{ monthLabel }}</h1>
-      <input
-        v-model="month" type="month"
-        class="rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/30"
-      />
+      <MonthPicker v-model="month" />
     </div>
 
     <p v-if="loading && !data" class="py-12 text-center text-gray-400">Memuat...</p>

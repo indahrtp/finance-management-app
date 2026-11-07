@@ -17,7 +17,11 @@ class BudgetController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate([
-            'month' => ['nullable', 'date_format:Y-m'],
+            'month' => ['nullable', 'date_format:Y-m', function ($attribute, $value, $fail) {
+                if ($value > now()->format('Y-m')) {
+                    $fail('Periode tidak boleh di masa depan.');
+                }
+            }],
         ]);
 
         // tanggal = 1
@@ -31,6 +35,7 @@ class BudgetController extends Controller
         // Realisasi = total pengeluaran (debit - credit) per kategori pada bulan itu
         $actuals = DB::table('transactions as t')
             ->join('coa as a', 'a.id', '=', 't.coa_id')
+            ->where('t.status', 'posted')
             ->whereBetween('t.date', [$start->toDateString(), $end->toDateString()])
             ->groupBy('a.category_id')
             ->selectRaw('a.category_id, SUM(t.debit - t.credit) as actual')
@@ -86,7 +91,11 @@ class BudgetController extends Controller
                 'required',
                 Rule::exists('categories', 'id')->where('type', CategoryType::Expense->value),
             ],
-            'month' => ['required', 'date_format:Y-m'],
+            'month' => ['required', 'date_format:Y-m', function ($attribute, $value, $fail) {
+                if ($value > now()->format('Y-m')) {
+                    $fail('Periode tidak boleh di masa depan.');
+                }
+            }],
             'amount' => ['required', 'numeric', 'gt:0', 'max:9999999999999'],
         ], [
             'category_id.exists' => 'Anggaran hanya bisa dibuat untuk kategori expense.',

@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Enums\CategoryType;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Rules\UniqueInsensitive;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
@@ -29,8 +31,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['name' => UniqueInsensitive::clean($request->input('name'))]);
+
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:categories,name'],
+            'name' => ['bail', 'required', 'string', 'max:255', new UniqueInsensitive('categories', 'name')],
             'type' => ['required', Rule::enum(CategoryType::class)],
         ]);
 
@@ -50,10 +54,18 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        $request->merge(['name' => UniqueInsensitive::clean($request->input('name'))]);
+
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('categories', 'name')->ignore($category->id)],
+            'name' => ['bail', 'required', 'string', 'max:255', new UniqueInsensitive('categories', 'name', $category->id)],
             'type' => ['required', Rule::enum(CategoryType::class)],
         ]);
+
+        if ($category->type->value !== $data['type'] && $category->coa()->exists()) {
+            throw ValidationException::withMessages([
+                'type' => 'Tipe tidak dapat diubah karena kategori ini sudah memiliki COA.',
+            ]);
+        }
 
         $category->update($data);
 

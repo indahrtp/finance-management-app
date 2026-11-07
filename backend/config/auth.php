@@ -114,4 +114,15 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    'login' => [
+        'max_attempts' => (int) env('LOGIN_MAX_ATTEMPTS', 5),
+        'warn_at' => (int) env('LOGIN_WARN_AT', 3),
+        'lock_minutes' => (int) env('LOGIN_LOCK_MINUTES', 15),
+    ],
+
+    'token' => [
+        'lifetime' => (int) env('API_TOKEN_LIFETIME', 120), 
+        'sliding' => (bool) env('API_TOKEN_SLIDING', true),
+    ],
+
 ];

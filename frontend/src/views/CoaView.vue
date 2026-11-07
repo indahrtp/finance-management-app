@@ -20,23 +20,47 @@ const loading = ref(false)
 const search = ref('')
 const filterCategory = ref('')
 
-const categoryOptions = computed(() =>
-  categories.value.map((c) => ({ value: c.id, label: `${c.name} (${c.type})` })),
-)
-const filterOptions = computed(() =>
-  categories.value.map((c) => ({ value: c.id, label: c.name })),
-)
-
 // form
 const showForm = ref(false)
 const editingId = ref(null)
-const form = reactive({ code: '', name: '', category_id: '' })
+const editingType = ref(null)   
+const editingCode = ref('')     
+const codePreview = ref('')     
+const form = reactive({ name: '', category_id: '' })
 const errors = ref({})
 const saving = ref(false)
 
 // hapus
 const deleting = ref(null)
 const deleteBusy = ref(false)
+
+// opsi dropdown
+const filterOptions = computed(() =>
+  categories.value.map((c) => ({ value: c.id, label: c.name })),
+)
+
+// saat ubah, kategori hanya boleh yang bertipe sama
+const formCategoryOptions = computed(() =>
+  categories.value
+    .filter((c) => !editingId.value || c.type === editingType.value)
+    .map((c) => ({ value: c.id, label: `${c.name} (${c.type})` })),
+)
+
+const displayCode = computed(() =>
+  editingId.value ? editingCode.value : codePreview.value,
+)
+
+watch(() => form.category_id, async (id) => {
+  if (editingId.value) return
+  codePreview.value = ''
+  if (!id) return
+  try {
+    const { data } = await api.get('/coa/next-code', { params: { category_id: id } })
+    codePreview.value = data.code
+  } catch (e) {
+    errors.value = { ...errors.value, category_id: validationErrors(e).category_id || errorMessage(e) }
+  }
+})
 
 async function loadCategories() {
   try {
@@ -66,14 +90,19 @@ async function load() {
 
 function openCreate() {
   editingId.value = null
-  Object.assign(form, { code: '', name: '', category_id: '' })
+  editingType.value = null
+  editingCode.value = ''
+  codePreview.value = ''
+  Object.assign(form, { name: '', category_id: '' })
   errors.value = {}
   showForm.value = true
 }
 
 function openEdit(item) {
   editingId.value = item.id
-  Object.assign(form, { code: item.code, name: item.name, category_id: item.category_id })
+  editingType.value = item.category?.type
+  editingCode.value = item.code
+  Object.assign(form, { name: item.name, category_id: item.category_id })
   errors.value = {}
   showForm.value = true
 }
@@ -86,8 +115,8 @@ async function save() {
       await api.put(`/coa/${editingId.value}`, form)
       toast.success('COA diperbarui.')
     } else {
-      await api.post('/coa', form)
-      toast.success('COA ditambahkan.')
+      const { data } = await api.post('/coa', form)
+      toast.success(`COA ${data.code} ditambahkan.`)
     }
     showForm.value = false
     await load()
@@ -114,7 +143,6 @@ async function remove() {
   }
 }
 
-// Pencarian ditunda 300 ms 
 let timer
 watch(search, () => {
   clearTimeout(timer)
@@ -183,9 +211,17 @@ onMounted(() => {
 
   <BaseModal :show="showForm" :title="editingId ? 'Ubah COA' : 'Tambah COA'" @close="showForm = false">
     <form class="space-y-4" @submit.prevent="save">
-      <BaseInput v-model="form.code" label="Kode" :error="errors.code" />
+      <BaseSelect v-model="form.category_id" label="Kategori" :options="formCategoryOptions" :error="errors.category_id" />
+
+      <div>
+        <label class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-200">Kode</label>
+        <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 px-3 py-2 font-mono text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300">
+          {{ displayCode || 'Dibuat otomatis setelah kategori dipilih' }}
+        </div>
+      </div>
+
       <BaseInput v-model="form.name" label="Nama" :error="errors.name" />
-      <BaseSelect v-model="form.category_id" label="Kategori" :options="categoryOptions" :error="errors.category_id" />
+
       <div class="flex justify-end gap-2 pt-2">
         <BaseButton type="button" variant="secondary" @click="showForm = false">Batal</BaseButton>
         <BaseButton :loading="saving">{{ saving ? 'Menyimpan...' : 'Simpan' }}</BaseButton>

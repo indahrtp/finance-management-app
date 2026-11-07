@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, Eye, EyeOff } from 'lucide-vue-next'
 import { useAuthStore } from '@/stores/auth'
@@ -12,7 +12,42 @@ const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const error = ref('')
+const warning = ref('')
 const loading = ref(false)
+
+const lockSeconds = ref(0)
+let timer = null
+
+const locked = computed(() => lockSeconds.value > 0)
+const countdown = computed(() => {
+  const m = String(Math.floor(lockSeconds.value / 60)).padStart(2, '0')
+  const s = String(lockSeconds.value % 60).padStart(2, '0')
+  return `${m}:${s}`
+})
+
+const notice = ref('')
+
+onMounted(() => {
+  if (sessionStorage.getItem('session_expired')) {
+    notice.value = 'Sesi Anda telah berakhir. Silakan masuk kembali.'
+    sessionStorage.removeItem('session_expired')
+  }
+})
+
+function startLock(seconds) {
+  clearInterval(timer)
+  lockSeconds.value = seconds
+  timer = setInterval(() => {
+    lockSeconds.value--
+    if (lockSeconds.value <= 0) {
+      clearInterval(timer)
+      error.value = ''
+      warning.value = ''
+    }
+  }, 1000)
+}
+
+onBeforeUnmount(() => clearInterval(timer))
 
 function fillDemo() {
   email.value = 'admin@example.com'
@@ -20,16 +55,26 @@ function fillDemo() {
 }
 
 async function submit() {
+  if (locked.value) return
+
   error.value = ''
+  warning.value = ''
   loading.value = true
   try {
     await auth.login(email.value, password.value)
     router.push({ name: 'dashboard' })
   } catch (e) {
-    if (e.response?.status === 429) {
-      error.value = 'Terlalu banyak percobaan. Coba lagi sebentar lagi.'
+    const res = e.response
+    if (res?.status === 423) {
+      error.value = res.data.message
+      startLock(res.data.retry_after)
+    } else if (res?.status === 429) {
+      error.value = 'Terlalu banyak permintaan. Coba lagi sebentar lagi.'
+    } else if (res?.status === 422) {
+      error.value = res.data?.errors?.email?.[0] || 'Gagal login. Coba lagi.'
+      warning.value = res.data?.warning || ''
     } else {
-      error.value = e.response?.data?.errors?.email?.[0] || 'Gagal login. Coba lagi.'
+      error.value = 'Gagal login. Coba lagi.'
     }
   } finally {
     loading.value = false
@@ -66,8 +111,18 @@ async function submit() {
           class="space-y-5 rounded-2xl border border-gray-200 bg-white p-8 shadow-xl shadow-gray-200/50 dark:border-gray-800 dark:bg-gray-900 dark:shadow-none"
           @submit.prevent="submit"
         >
+
+          <p v-if="notice" class="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
+            {{ notice }}
+          </p>
           <p v-if="error" class="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-500/15 dark:text-red-400">
             {{ error }}
+          </p>
+          <p v-if="warning" class="rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
+            {{ warning }}
+          </p>
+          <p v-if="locked" class="text-center text-sm text-gray-600 dark:text-gray-300">
+            Coba lagi dalam <strong class="tabular-nums">{{ countdown }}</strong>
           </p>
 
           <div>
@@ -97,10 +152,10 @@ async function submit() {
           </div>
 
           <button
-            :disabled="loading"
+            :disabled="loading || locked"
             class="w-full rounded-xl bg-brand-500 py-3 font-medium text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-600 disabled:opacity-60"
           >
-            {{ loading ? 'Memproses...' : 'Masuk' }}
+            {{ locked ? `Terkunci (${countdown})` : loading ? 'Memproses...' : 'Masuk' }}
           </button>
 
           <p class="text-center text-sm text-gray-500 dark:text-gray-400">

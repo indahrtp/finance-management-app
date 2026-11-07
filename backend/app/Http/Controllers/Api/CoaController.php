@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Coa;
+use App\Rules\UniqueInsensitive;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class CoaController extends Controller
 {
@@ -33,13 +37,26 @@ class CoaController extends Controller
      */
     public function store(Request $request)
     {
+        $request->merge(['name' => UniqueInsensitive::clean($request->input('name'))]);
+
         $data = $request->validate([
-            'code' => ['required', 'string', 'max:20', 'unique:coa,code'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['bail', 'required', 'string', 'max:255', new UniqueInsensitive('coa', 'name')],
             'category_id' => ['required', 'exists:categories,id'],
         ]);
 
-        return response()->json(Coa::create($data)->load('category'), 201);
+        $coa = DB::transaction(function () use ($data) {
+            DB::select('SELECT pg_advisory_xact_lock(?)', [73001]); 
+
+            $category = Category::findOrFail($data['category_id']);
+
+            return Coa::create([
+                'name' => $data['name'],
+                'category_id' => $category->id,
+                'code' => $this->generateCode($category),
+            ]);
+        });
+
+        return response()->json($coa->load('category'), 201);
     }
 
     /**
@@ -55,13 +72,22 @@ class CoaController extends Controller
      */
     public function update(Request $request, Coa $coa)
     {
+        $request->merge(['name' => UniqueInsensitive::clean($request->input('name'))]);
+
         $data = $request->validate([
-            'code' => ['required', 'string', 'max:20', Rule::unique('coa', 'code')->ignore($coa->id)],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['bail', 'required', 'string', 'max:255', new UniqueInsensitive('coa', 'name', $coa->id)],
             'category_id' => ['required', 'exists:categories,id'],
         ]);
 
-        $coa->update($data);
+        $newCategory = Category::findOrFail($data['category_id']);
+
+        if ($newCategory->type !== $coa->category->type) {
+            throw ValidationException::withMessages([
+                'category_id' => "Kategori harus bertipe {$coa->category->type->value}. Untuk pindah tipe, buat COA baru.",
+            ]);
+        }
+
+        $coa->update($data); // kode tidak berubah
 
         return $coa->load('category');
     }
@@ -78,5 +104,31 @@ class CoaController extends Controller
         $coa->delete();
 
         return response()->noContent();
+    }
+
+    public function suggestCode(Request $request)
+    {
+        $request->validate(['category_id' => ['required', 'exists:categories,id']]);
+
+        return ['code' => $this->generateCode(Category::findOrFail($request->category_id))];
+    }
+
+    private function generateCode(Category $category): string
+    {
+        $prefix = $category->type->codePrefix(); // '4' atau '6'
+
+        $max = DB::table('coa')
+            ->whereRaw('code ~ ?', ["^{$prefix}[0-9]{2}$"])
+            ->max(DB::raw('CAST(code AS INTEGER)'));
+
+        $next = $max ? $max + 1 : (int) ($prefix . '01');
+
+        if ($next > (int) ($prefix . '99')) {
+            throw ValidationException::withMessages([
+                'category_id' => "Rentang kode {$prefix}xx sudah penuh.",
+            ]);
+        }
+
+        return (string) $next;
     }
 }
