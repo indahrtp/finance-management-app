@@ -85,30 +85,32 @@ const expense = [20, 30, 25, 40, 35, 45]
       <!-- Hero -->
       <section class="relative overflow-hidden px-4 pb-20 pt-32 sm:px-6 sm:pt-40">
         <!-- Cahaya latar -->
-        <div class="pointer-events-none absolute left-1/2 top-0 -z-10 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-brand-500/20 blur-3xl" />
+        <div class="pointer-events-none absolute left-1/2 top-20 z-10 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-brand-500/20 blur-3xl" />
 
-        <div class="mx-auto max-w-3xl text-center">
-          <span class="animate-fade-up inline-block rounded-full border border-brand-500/20 bg-brand-50 dark:bg-brand-500/15 px-4 py-1.5 text-xs font-semibold text-brand-500 motion-reduce:animate-none">
-            Berbasis Chart of Account
-          </span>
-          <h1 class="animate-fade-up mt-6 text-4xl font-bold leading-tight tracking-tight motion-reduce:animate-none sm:text-6xl" style="animation-delay: 100ms">
-            Kelola keuangan Anda dengan lebih rapi
-          </h1>
-          <p class="animate-fade-up mx-auto mt-6 max-w-xl text-lg text-gray-600 dark:text-gray-300 motion-reduce:animate-none" style="animation-delay: 200ms">
-            Catat transaksi, kelompokkan per kategori, dan dapatkan laporan Profit/Loss
-            bulanan yang bisa diunduh ke Excel.
-          </p>
-          <div class="animate-fade-up mt-10 flex flex-col items-center justify-center gap-3 motion-reduce:animate-none sm:flex-row" style="animation-delay: 300ms">
-            <RouterLink
-              :to="auth.isLoggedIn ? '/dashboard' : '/login'"
-              class="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 font-medium text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-600"
-            >
-              Mulai Sekarang <ArrowRight :size="18" />
-            </RouterLink>
-            <a href="#fitur" class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-3 font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800">
-              Lihat Fitur
-            </a>
-          </div>
+        <div class=" relative z-10">
+            <div class="mx-auto max-w-3xl text-center">
+                <span class="animate-fade-up inline-block rounded-full border border-brand-500/20 bg-brand-50 dark:bg-brand-500/15 px-4 py-1.5 text-xs font-semibold text-brand-500 motion-reduce:animate-none">
+                    Berbasis Chart of Account
+                </span>
+                <h1 class="animate-fade-up mt-6 text-4xl font-bold leading-tight tracking-tight motion-reduce:animate-none sm:text-6xl" style="animation-delay: 100ms">
+                    Kelola keuangan Anda dengan lebih rapi
+                </h1>
+                <p class="animate-fade-up mx-auto mt-6 max-w-xl text-lg text-gray-600 dark:text-gray-300 motion-reduce:animate-none" style="animation-delay: 200ms">
+                    Catat transaksi, kelompokkan per kategori, dan dapatkan laporan Profit/Loss
+                    bulanan yang bisa diunduh ke Excel.
+                </p>
+                <div class="animate-fade-up mt-10 flex flex-col items-center justify-center gap-3 motion-reduce:animate-none sm:flex-row" style="animation-delay: 300ms">
+                    <RouterLink
+                    :to="auth.isLoggedIn ? '/dashboard' : '/login'"
+                    class="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 font-medium text-white shadow-lg shadow-brand-500/25 transition hover:bg-brand-600"
+                    >
+                    Mulai Sekarang <ArrowRight :size="18" />
+                    </RouterLink>
+                    <a href="#fitur" class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-3 font-medium text-gray-700 dark:text-gray-200 transition hover:bg-gray-50 dark:hover:bg-gray-800">
+                    Lihat Fitur
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Mockup dashboard -->
