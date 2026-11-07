@@ -3,14 +3,19 @@ import { useAuthStore } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to) {
+    if (to.hash) return { el: to.hash, behavior: 'smooth' }
+    return { top: 0 }
+  },
   routes: [
+    { path: '/', name: 'landing', component: () => import('@/views/LandingView.vue') },
     { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue'), meta: { guest: true } },
     {
       path: '/',
       component: () => import('@/layouts/AppLayout.vue'),
       meta: { auth: true },
       children: [
-        { path: '', name: 'dashboard', component: () => import('@/views/DashboardView.vue') },
+        { path: 'dashboard', name: 'dashboard', component: () => import('@/views/DashboardView.vue') },
         { path: 'categories', name: 'categories', component: () => import('@/views/CategoryView.vue') },
         { path: 'coa', name: 'coa', component: () => import('@/views/CoaView.vue') },
         { path: 'transactions', name: 'transactions', component: () => import('@/views/TransactionView.vue') },

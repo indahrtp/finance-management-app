@@ -12,7 +12,7 @@ const route = useRoute()
 const open = ref(false) // sidebar di mobile
 
 function isActive(to) {
-  return to === '/' ? route.path === '/' : route.path.startsWith(to)
+  return route.path.startsWith(to)
 }
 
 async function logout() {
