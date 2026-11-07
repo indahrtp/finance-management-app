@@ -68,9 +68,6 @@ src/
 | `/budgets` | Anggaran | Ya |
 | `/reports/profit-loss` | Laporan Profit/Loss (tahunan atau bulanan) | Ya |
 
-Penjaga halaman ada di `router/index.js`: halaman bertanda login mengarahkan ke `/login`
-jika belum masuk, dan `/login` mengarahkan ke dashboard jika sudah masuk.
-
 ## Alur Data
 
 - `services/api.js` menyisipkan token Bearer dari `localStorage` pada setiap request. Jika
@@ -81,7 +78,7 @@ jika belum masuk, dan `/login` mengarahkan ke dashboard jika sudah masuk.
 - Unduhan file (Excel, lampiran) memakai Axios dengan `responseType: 'blob'` lalu
   `utils/download.js`, karena tautan biasa tidak membawa token.
 
-## Komponen UI (`components/ui/`)
+## Komponen UI
 
 | Komponen | Fungsi |
 |---|---|
@@ -94,30 +91,3 @@ jika belum masuk, dan `/login` mengarahkan ke dashboard jika sudah masuk.
 | `ThemeToggle` | Tombol mode terang/gelap |
 | `TypeBadge` | Lencana income atau expense |
 | `RevealOnScroll` | Animasi muncul saat digulir (landing page) |
-
-## Tema dan Tampilan
-
-- Warna, font, dan animasi didefinisikan di blok `@theme` pada `assets/main.css`
-- **Dark mode** berbasis class `dark` pada `<html>`, pilihan disimpan di `localStorage`.
-  Skrip kecil di `index.html` menerapkan tema sebelum halaman digambar agar tidak berkedip
-- Sidebar dapat disembunyikan di layar lebar (pilihan tersimpan), dan menjadi drawer di HP
-- Animasi menghormati pengaturan sistem "kurangi gerakan"
-
-## Aturan Periode
-
-Pemilih periode (Dashboard, Laporan, Anggaran) tidak dapat memilih bulan atau tahun yang
-belum tiba. Batas awalnya diambil dari data paling awal lewat `GET /api/period-range`
-(composable `usePeriodRange`), dan dimuat ulang setelah menyimpan transaksi atau anggaran.
-Tanggal pada form dan filter transaksi dibatasi sampai hari ini (`utils/period.js`).
-
-## Troubleshooting
-
-| Masalah | Penyebab dan solusi |
-|---|---|
-| Request ke `undefined/login` | `.env` belum dibuat, atau dev server belum di-restart |
-| Error CORS | Backend belum di-restart setelah mengubah `config/cors.php` |
-| `Network Error` | Backend belum berjalan di port 8000 |
-| Gaya Tailwind tidak muncul | `@import "tailwindcss"` belum ada di `main.css` atau plugin belum ada di `vite.config.js` |
-| `Failed to resolve component: X` | Komponen atau ikon `X` dipakai di template tetapi belum diimpor |
-| Mode gelap tidak berubah | `@custom-variant dark` belum ada di `main.css` |
-| Unduhan Excel atau lampiran rusak | `responseType: 'blob'` tidak terpasang pada request |

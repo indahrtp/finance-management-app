@@ -34,16 +34,13 @@ php artisan serve
 
 ## Konfigurasi `.env`
 
-| Variabel | Contoh | Keterangan |
+| Variabel | Contoh |
 |---|---|---|
-| `APP_TIMEZONE` | `Asia/Jakarta` | **Penting**: dipakai validasi "tidak boleh melebihi hari ini" |
-| `DB_CONNECTION` | `pgsql` | |
-| `DB_HOST` / `DB_PORT` | `127.0.0.1` / `5432` | |
-| `DB_DATABASE` | `finance_app` | |
-| `DB_USERNAME` / `DB_PASSWORD` | | Jangan di-commit |
-
-CORS diatur di `config/cors.php`. `allowed_origins` harus memuat alamat frontend
-(`http://localhost:5173`). Restart `php artisan serve` setelah mengubahnya.
+| `APP_TIMEZONE` | `Asia/Jakarta` |
+| `DB_CONNECTION` | `pgsql` | 
+| `DB_HOST` / `DB_PORT` |
+| `DB_DATABASE` | `finance_app` | 
+| `DB_USERNAME` / `DB_PASSWORD` | 
 
 ## Perintah Berguna
 
@@ -86,12 +83,7 @@ routes/api.php
 { "message": "...", "errors": { "field": ["pesan"] } }
 ```
 
-- Daftar transaksi dipaginasi mengikuti format `paginate()` Laravel
-  (`data`, `current_page`, `last_page`, `total`, `from`, `to`)
-
 ## Daftar Endpoint
-
-Semua endpoint selain `POST /api/login` memerlukan token.
 
 ### Autentikasi
 
@@ -121,7 +113,7 @@ Semua endpoint selain `POST /api/login` memerlukan token.
 | Method | Endpoint | Keterangan |
 |---|---|---|
 | GET | `/api/transactions` | Query `page`, `per_page`, `search` (deskripsi atau no. referensi), `coa_id`, `wallet_id`, `status`, `start_date`, `end_date` |
-| POST | `/api/transactions` | Body `date`, `coa_id`, `wallet_id`, `debit`, `credit`, opsional `description`, `reference_no`, `notes`. **Selalu berstatus draft** |
+| POST | `/api/transactions` | Body `date`, `coa_id`, `wallet_id`, `debit`, `credit`, opsional `description`. **Selalu berstatus draft** |
 | PUT | `/api/transactions/{id}` | Status tidak dapat diubah di sini. 409 jika void |
 | DELETE | `/api/transactions/{id}` | Hanya draft. Selain itu 409 |
 | POST | `/api/transactions/{id}/post` | draft menjadi posted |
@@ -148,9 +140,7 @@ Semua endpoint selain `POST /api/login` memerlukan token.
 | GET | `/api/dashboard` | Query `year` (mode tahunan) atau `month` (mode bulanan) |
 | GET | `/api/period-range` | Bulan paling awal yang memiliki data, untuk batas pemilih periode |
 
-Tahun harus 2000 sampai tahun berjalan, dan bulan tidak boleh melebihi bulan berjalan.
-
-## Di Mana Aturan Bisnis Ditegakkan
+## Aturan Bisnis
 
 | Aturan | Lapisan |
 |---|---|
@@ -172,36 +162,3 @@ Tahun harus 2000 sampai tahun berjalan, dan bulan tidak boleh melebihi bulan ber
 - `generate($year)`: 12 kolom bulan (dipakai laporan tahunan, dashboard, export Excel)
 - `generateMonthly($year, $month)`: per COA untuk bulan terpilih dan bulan sebelumnya
 - `daily($year, $month)`: data harian untuk grafik dashboard bulanan
-
-Seluruh agregasi dijalankan di PostgreSQL dengan `SUM(CASE ...)`. Export Excel
-(`ProfitLossExport`) memakai service yang sama sehingga angkanya identik dengan layar.
-
-## Seeder
-
-`DatabaseSeeder` memanggil secara berurutan: `UserSeeder`, `CategorySeeder`, `CoaSeeder`,
-`WalletSeeder`, `TransactionSeeder`, `BudgetSeeder`. Data master memakai `updateOrCreate`.
-`TransactionSeeder` membuat transaksi **tahun berjalan** (dari Januari sampai hari ini)
-dengan nominal deterministik, ditambah satu draft dan satu void.
-
-Urutan migrasi penting: migrasi `wallets` harus berjalan **sebelum** `transactions`.
-
-## Lampiran
-
-Lampiran disimpan di `storage/app/private/transaction-attachments` (disk `local`, tidak
-dapat diakses publik) dengan nama acak. Pengunduhan hanya lewat endpoint yang memerlukan
-login. `storage:link` tidak diperlukan.
-
-## Troubleshooting
-
-| Masalah | Penyebab dan solusi |
-|---|---|
-| `could not find driver` | Aktifkan `extension=pdo_pgsql` di `php.ini` |
-| 404 pada `/api/...` | Cek `php artisan route:list --path=api` dan `routes/api.php` |
-| `relation "wallets" does not exist` | Urutan file migrasi salah (wallets harus lebih awal dari transactions) |
-| `Class "App\Http\Controllers\Api\X" not found` | Lupa `use` di controller untuk class `X` |
-| Transaksi hari ini ditolak "melebihi hari ini" | `APP_TIMEZONE` belum diisi `Asia/Jakarta`, lalu `php artisan config:clear` |
-| Export Excel gagal | Cek ekstensi `gd`, `zip`, dan paket `maatwebsite/excel` terpasang |
-| Upload lampiran gagal | Periksa `upload_max_filesize` dan `post_max_size` di `php.ini`, serta ekstensi `fileinfo` |
-| Error CORS di browser | Periksa `config/cors.php`, lalu restart server |
-
-Log aplikasi ada di `storage/logs/laravel.log`.
