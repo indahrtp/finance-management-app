@@ -17,6 +17,7 @@ const router = createRouter({
         { path: 'reports/profit-loss', name: 'profit-loss', component: () => import('@/views/ProfitLossView.vue') },
       ],
     },
+    { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })
 

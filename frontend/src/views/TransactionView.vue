@@ -53,7 +53,7 @@ const amountLabel = computed(() => {
 const deleting = ref(null)
 const deleteBusy = ref(false)
 
-const today = () => new Date().toISOString().slice(0, 10)
+const today = () => new Date().toLocaleDateString('sv-SE')
 
 async function loadCoa() {
   try {
